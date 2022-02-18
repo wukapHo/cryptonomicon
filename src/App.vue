@@ -8,24 +8,62 @@
       >
       <input
         v-model="ticker"
+        @keydown="isAdded = false"
+        @blur="isAdded = false"
         @keydown.enter="addTicker"
         class="ticker__input"
         id="ticker"
         type="text"
         placeholder="Например DOGE"
       >
+      <div
+        :class="{
+          'ticker__error--active': isAdded,
+        }"
+        class="ticker__error"
+        >Такой тикер уже добавлен</div
+      >
       <button
         @click="addTicker"
         class="ticker__button"
+        >Добавить</button
       >
-        Добавить
-      </button>
     </div>
-    <div class="field"
+    <div
       v-if="tickers.length"
+      class="interface">
+      <div>
+        <label
+          class="interface__label"
+          for="filter-input"
+          >Фильтр:</label
+        >
+        <input
+          v-model="filter"
+          class="interface__filter"
+          id="filter-input"
+          type="text"
+        >
+      </div>
+      <div class="interface__buttons">
+        <button
+          v-show="page > 1"
+          @click="page--"
+          class="interface__button interface__button--prev"
+          >Назад</button>
+        <button
+          v-show="hasNextPage"
+          @click="page++"
+          class="interface__button interface__button--next"
+          >Вперед</button>
+      </div>
+    </div>
+    <div
+      v-if="tickers.length"
+      class="field"
     >
       <div
-        v-for="t in tickers"
+        v-for="t in filteredTickers()"
         :key="t.name"
         @click="selectTicker(t)"
         :class="{
@@ -72,7 +110,12 @@ export default {
       ticker: null,
       tickers: [],
       selectedTicker: null,
+      isAdded: false,
       graph: [],
+      coinList: [],
+      page: 1,
+      filter: '',
+      hasNextPage: true,
     };
   },
 
@@ -83,10 +126,16 @@ export default {
         price: '-',
       };
 
+      if (this.tickers.find((t) => t.name.toLowerCase() === currentTicker.name.toLowerCase())) {
+        this.isAdded = true;
+        return;
+      }
+
       this.tickers.push(currentTicker);
       localStorage.setItem('cryptonomicon-list', JSON.stringify(this.tickers));
       this.subscribeToUpdates(currentTicker.name);
       this.ticker = '';
+      this.filter = '';
     },
 
     subscribeToUpdates(tickerName) {
@@ -112,6 +161,7 @@ export default {
 
     handleDelete(tickerToRemove) {
       this.tickers = this.tickers.filter((t) => t !== tickerToRemove);
+      localStorage.setItem('cryptonomicon-list', JSON.stringify(this.tickers));
     },
 
     normilizeGraph() {
@@ -126,9 +176,50 @@ export default {
       this.selectedTicker = null;
       this.graph = [];
     },
+
+    async getCoinList() {
+      const res = await fetch(
+        'https://min-api.cryptocompare.com/data/all/coinlist?summary=true',
+      );
+      const data = await res.json();
+      this.coinList = data.Data;
+    },
+
+    filteredTickers() {
+      const start = 6 * (this.page - 1);
+      const end = 6 * this.page;
+      const filteredTickers = this.tickers.filter((t) => t.name.includes(this.filter));
+
+      this.hasNextPage = filteredTickers.length > end;
+
+      return filteredTickers.slice(start, end);
+    },
+  },
+
+  watch: {
+    filter() {
+      this.page = 1;
+      window.history.pushState(
+        null,
+        document.title,
+        `${window.location.pathname}?filter=${this.filter}&page=${this.page}`,
+      );
+    },
+    page() {
+      window.history.pushState(
+        null,
+        document.title,
+        `${window.location.pathname}?filter=${this.filter}&page=${this.page}`,
+      );
+    },
   },
 
   created() {
+    const windowData = Object.fromEntries(new URL(window.location).searchParams.entries());
+
+    if (windowData.filter) this.filter = windowData.filter;
+    if (windowData.page) this.page = windowData.page;
+
     const tickersData = localStorage.getItem('cryptonomicon-list');
 
     if (tickersData) {
@@ -138,6 +229,10 @@ export default {
       });
     }
   },
+
+  mounted() {
+    this.getCoinList();
+  },
 };
 </script>
 
@@ -146,6 +241,7 @@ export default {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: sans-serif;
 }
 
 .container {
@@ -167,7 +263,7 @@ export default {
     height: 30px;
     width: 300px;
     padding: 0 15px;
-    border: none;
+    border: 2px solid transparent;
     outline: none;
     border-radius: 15px;
     font-size: 16px;
@@ -175,6 +271,15 @@ export default {
 
     &:focus {
       border: 2px solid #cccccc;
+    }
+  }
+
+  &__error {
+    color: #fa2020;
+    opacity: 0;
+
+    &--active {
+      opacity: 1;
     }
   }
 
@@ -193,6 +298,62 @@ export default {
 
     &:hover {
       background-color: #798d87;
+    }
+  }
+}
+
+.interface {
+  padding: 20px 20px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 3px solid #cccccc;
+
+  &__filter {
+    height: 30px;
+    margin-left: 10px;
+    padding: 0 10px;
+    border: 1px solid #cccccc;
+    border-radius: 10px;
+    outline: none;
+    font-size: 16px;
+
+    &:focus {
+      border: 1px solid #000000;
+    }
+  }
+
+  &__buttons {
+    width: 210px;
+    height: 30px;
+    position: relative;
+  }
+
+  &__button {
+    width: 100px;
+    height: 30px;
+    padding: 0 20px;
+    border: none;
+    outline: none;
+    border-radius: 20px;
+    background-color: #cccccc;
+    color: #ffffff;
+    font-size: 18px;
+    text-align: center;
+    cursor: pointer;
+
+    &:hover {
+      background-color: #798d87;
+    }
+
+    &--prev {
+      position: absolute;
+      left: 0;
+    }
+
+    &--next {
+      position: absolute;
+      right: 0;
     }
   }
 }
