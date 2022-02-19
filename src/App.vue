@@ -63,7 +63,7 @@
       class="field"
     >
       <div
-        v-for="t in filteredTickers()"
+        v-for="t in paginatedTickers"
         :key="t.name"
         @click="selectTicker(t)"
         :class="{
@@ -86,12 +86,12 @@
     >
       <div class="graph__title">{{ selectedTicker.name }} - USD</div>
       <button class="graph__clear-button"
-        @click="clearGraph"
+        @click="selectedTicker = null"
       >
       </button>
       <div class="graph__field">
         <div
-          v-for="(bar, idx) in normilizeGraph()"
+          v-for="(bar, idx) in normilizedGraph"
           :key="idx"
           :style="{ height: `${bar}%` }"
           class="graph__field-item"
@@ -115,8 +115,43 @@ export default {
       coinList: [],
       page: 1,
       filter: '',
-      hasNextPage: true,
     };
+  },
+
+  computed: {
+    startIdx() {
+      return 6 * (this.page - 1);
+    },
+    endIdx() {
+      return 6 * this.page;
+    },
+    filteredTickers() {
+      return this.tickers.filter((t) => t.name.includes(this.filter));
+    },
+    paginatedTickers() {
+      return this.filteredTickers.slice(this.startIdx, this.endIdx);
+    },
+    hasNextPage() {
+      return this.filteredTickers.length > this.endIdx;
+    },
+    normilizedGraph() {
+      const maxValue = Math.max(...this.graph);
+      const minValue = Math.min(...this.graph);
+
+      if (minValue === maxValue) {
+        return this.graph.map(() => 50);
+      }
+
+      return this.graph.map(
+        (price) => 5 + ((price - minValue) * 95) / (maxValue - minValue),
+      );
+    },
+    pageStateOptions() {
+      return {
+        filter: this.filter,
+        page: this.page,
+      };
+    },
   },
 
   methods: {
@@ -131,11 +166,11 @@ export default {
         return;
       }
 
-      this.tickers.push(currentTicker);
-      localStorage.setItem('cryptonomicon-list', JSON.stringify(this.tickers));
-      this.subscribeToUpdates(currentTicker.name);
+      this.tickers = [...this.tickers, currentTicker];
       this.ticker = '';
       this.filter = '';
+
+      this.subscribeToUpdates(currentTicker.name);
     },
 
     subscribeToUpdates(tickerName) {
@@ -144,9 +179,12 @@ export default {
           `https://min-api.cryptocompare.com/data/price?fsym=${tickerName}&tsyms=USD&api_key=01cc57dbd6f92665196c81d27c44abbf0ba27846387d09ad352a8242a91c7ea2`,
         );
         const data = await res.json();
-        this.tickers.find((t) => t.name === tickerName).price = data.USD > 1
-          ? data.USD.toFixed(2)
-          : data.USD.toPrecision(2);
+
+        if (this.tickers.length > 0) {
+          this.tickers.find((t) => t.name === tickerName).price = data.USD > 1
+            ? data.USD.toFixed(2)
+            : data.USD.toPrecision(2);
+        }
 
         if (this.selectedTicker?.name === tickerName) {
           this.graph.push(data.USD);
@@ -156,25 +194,14 @@ export default {
 
     selectTicker(ticker) {
       this.selectedTicker = ticker;
-      this.graph = [];
     },
 
     handleDelete(tickerToRemove) {
       this.tickers = this.tickers.filter((t) => t !== tickerToRemove);
-      localStorage.setItem('cryptonomicon-list', JSON.stringify(this.tickers));
-    },
-
-    normilizeGraph() {
-      const maxValue = Math.max(...this.graph);
-      const minValue = Math.min(...this.graph);
-      return this.graph.map(
-        (price) => 5 + ((price - minValue) * 95) / (maxValue - minValue),
-      );
-    },
-
-    clearGraph() {
-      this.selectedTicker = null;
-      this.graph = [];
+      if (this.selectedTicker === tickerToRemove) {
+        this.selectedTicker = null;
+        this.graph = [];
+      }
     },
 
     async getCoinList() {
@@ -184,41 +211,38 @@ export default {
       const data = await res.json();
       this.coinList = data.Data;
     },
-
-    filteredTickers() {
-      const start = 6 * (this.page - 1);
-      const end = 6 * this.page;
-      const filteredTickers = this.tickers.filter((t) => t.name.includes(this.filter));
-
-      this.hasNextPage = filteredTickers.length > end;
-
-      return filteredTickers.slice(start, end);
-    },
   },
 
   watch: {
+    tickers() {
+      localStorage.setItem('cryptonomicon-list', JSON.stringify(this.tickers));
+    },
+    paginatedTickers() {
+      if (this.paginatedTickers.length === 0 && this.page > 1) {
+        this.page -= 1;
+      }
+    },
+    selectedTicker() {
+      this.graph = [];
+    },
     filter() {
       this.page = 1;
-      window.history.pushState(
-        null,
-        document.title,
-        `${window.location.pathname}?filter=${this.filter}&page=${this.page}`,
-      );
     },
-    page() {
+    pageStateOptions(value) {
       window.history.pushState(
         null,
         document.title,
-        `${window.location.pathname}?filter=${this.filter}&page=${this.page}`,
+        `${window.location.pathname}?filter=${value.filter}&page=${value.page}`,
       );
     },
   },
 
   created() {
     const windowData = Object.fromEntries(new URL(window.location).searchParams.entries());
-
-    if (windowData.filter) this.filter = windowData.filter;
-    if (windowData.page) this.page = windowData.page;
+    const VALID_KEYS = ['filter', 'page'];
+    VALID_KEYS.forEach((key) => {
+      this[key] = windowData[key];
+    });
 
     const tickersData = localStorage.getItem('cryptonomicon-list');
 
@@ -295,6 +319,7 @@ export default {
     font-size: 18px;
     text-align: right;
     cursor: pointer;
+    transition: 0.3s;
 
     &:hover {
       background-color: #798d87;
@@ -341,6 +366,7 @@ export default {
     font-size: 18px;
     text-align: center;
     cursor: pointer;
+    transition: 0.3s;
 
     &:hover {
       background-color: #798d87;
@@ -406,7 +432,13 @@ export default {
     background: #ffffff url(./assets/cart-icon.svg) no-repeat center left 10px;
     font-size: 16px;
     text-align: right;
+    opacity: 0.6;
     cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      opacity: 1;
+    }
   }
 }
 
@@ -432,6 +464,7 @@ export default {
     border-radius: 50%;
     background: #cccccc url(./assets/cross-icon.svg) no-repeat center;
     cursor: pointer;
+    transition: 0.3s;
 
     &:hover {
       background-color: #798d87;
