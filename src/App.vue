@@ -68,11 +68,12 @@
         @click="selectTicker(t)"
         :class="{
           'field__item--active': selectedTicker === t,
+          'field__item--invalid': t.isInvalid,
         }"
         class="field__item"
       >
         <div class="field__item-title">{{ t.name }} - USD</div>
-        <div class="field__item-rate">{{ t.price }}</div>
+        <div class="field__item-rate">{{ formatPrice(t.price) }}</div>
         <button
           @click.stop="handleDelete(t)"
           class="field__item-button-delete"
@@ -89,9 +90,13 @@
         @click="selectedTicker = null"
       >
       </button>
-      <div class="graph__field">
+      <div
+        ref="graph"
+        class="graph__field"
+      >
         <div
           v-for="(bar, idx) in normilizedGraph"
+          ref="graphElement"
           :key="idx"
           :style="{ height: `${bar}%` }"
           class="graph__field-item"
@@ -112,8 +117,12 @@ export default {
       ticker: null,
       tickers: [],
       selectedTicker: null,
+
       isAdded: false,
+
       graph: [],
+      maxGraphElements: 1,
+
       coinList: [],
       page: 1,
       filter: '',
@@ -139,9 +148,15 @@ export default {
     }
   },
 
-  // mounted() {
-  //   this.getCoinList();
-  // },
+  mounted() {
+    // this.getCoinList();
+    window.addEventListener('resize', this.calculateMaxGraphElements);
+  },
+
+  beforeUnmount() {
+    // this.getCoinList();
+    window.removeEventListener('resize', this.calculateMaxGraphElements);
+  },
 
   computed: {
     startIdx() {
@@ -186,30 +201,42 @@ export default {
         price: '-',
       };
 
-      if (this.tickers.find((t) => t.name.toLowerCase() === currentTicker.name.toLowerCase())) {
+      if (this.tickers.find((t) => t.name.toUpperCase() === currentTicker.name.toUpperCase())) {
         this.isAdded = true;
         return;
       }
+
+      currentTicker.isInvalid = subscribeToTicker(
+        currentTicker.name,
+        (newPrice) => this.updateTicker(currentTicker.name, newPrice),
+      );
+      // currentTicker.isInvalid = checkValidation();
 
       this.tickers = [...this.tickers, currentTicker];
       this.ticker = '';
       this.filter = '';
 
-      subscribeToTicker(
-        currentTicker.name,
-        (newPrice) => this.updateTicker(currentTicker.name, newPrice),
-      );
+      console.log(currentTicker);
     },
     updateTicker(tickerName, price) {
+      this.calculateMaxGraphElements();
       this.tickers
         .filter((t) => t.name === tickerName)
         .forEach((t) => {
           if ((t) === this.selectedTicker) {
             this.graph.push(price);
+            if (this.graph.length > this.maxGraphElements) {
+              const idxForRemove = this.graph.length - this.maxGraphElements;
+              this.graph = this.graph.slice(idxForRemove);
+            }
           }
           // eslint-disable-next-line no-param-reassign
           t.price = price;
         });
+    },
+    calculateMaxGraphElements() {
+      if (!this.$refs.graph || !this.$refs.graphElement) return;
+      this.maxGraphElements = this.$refs.graph.clientWidth / this.$refs.graphElement[0].clientWidth;
     },
     formatPrice(price) {
       if (price === '-') return price;
@@ -217,18 +244,6 @@ export default {
         ? price.toFixed(2)
         : price.toPrecision(2);
     },
-    // subscribeToUpdates(tickerName) {
-    //   setInterval(async () => {
-    //     const res = await fetch(
-    //       `https://min-api.cryptocompare.com/data/price?fsym=${tickerName}&tsyms=USD&api_key=01cc57dbd6f92665196c81d27c44abbf0ba27846387d09ad352a8242a91c7ea2`,
-    //     );
-    //     const data = await res.json();
-
-    //     if (this.selectedTicker?.name === tickerName) {
-    //       this.graph.push(data.USD);
-    //     }
-    //   }, 3000);
-    // },
     selectTicker(ticker) {
       this.selectedTicker = ticker;
     },
@@ -426,6 +441,10 @@ export default {
     &--active {
       border: 4px solid #798d87;
     }
+
+    &--invalid {
+      background-color: #f5756b;
+    }
   }
 
   &__item-title {
@@ -443,6 +462,7 @@ export default {
     height: 30px;
     padding: 0 10px;
     border: none;
+    border-radius: 10px;
     outline: none;
     background: #ffffff url(./assets/cart-icon.svg) no-repeat center left 10px;
     font-size: 16px;

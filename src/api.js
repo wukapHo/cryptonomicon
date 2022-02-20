@@ -6,15 +6,28 @@ const socket = new WebSocket(
 );
 
 const AGGREGATE_INDEX = '5';
+const INVALID_CODE = '500';
+const SUBSCRIBECOMPLETE_CODE = '16';
+let isInvalid = false;
 
 socket.addEventListener('message', (e) => {
   const { TYPE: type, FROMSYMBOL: currency, PRICE: newPrice } = JSON.parse(e.data);
+
   if (type !== AGGREGATE_INDEX || newPrice === undefined) {
     return;
   }
 
   const handlers = tickersHandlers.get(currency) ?? [];
   handlers.forEach((fn) => fn(newPrice));
+});
+
+socket.addEventListener('message', (e) => {
+  const { TYPE: type, MESSAGE: message } = JSON.parse(e.data);
+  if (type === INVALID_CODE && message === 'INVALID_SUB') {
+    isInvalid = true;
+  } else if (type === SUBSCRIBECOMPLETE_CODE) {
+    isInvalid = false;
+  }
 });
 
 function sendToWebSocket(message) {
@@ -48,12 +61,15 @@ export const subscribeToTicker = (ticker, cb) => {
   const subscribers = tickersHandlers.get(ticker) || [];
   tickersHandlers.set(ticker, [...subscribers, cb]);
   subscribeToTickerOnWs(ticker);
+  return isInvalid;
 };
 
 export const unsubscribeFromTicker = (ticker) => {
   tickersHandlers.delete(ticker);
   unsubscribeFromTickerOnWs(ticker);
 };
+
+// export const checkValidation = () => isInvalid;
 
 // export async function getCoinList() {
 //   return fetch('https://min-api.cryptocompare.com/data/all/coinlist?summary=true')
