@@ -1,35 +1,11 @@
 <template>
   <div class="container">
-    <div class="ticker">
-      <label
-        class="ticker__label"
-        for="ticker"
-        >Тикер</label
-      >
-      <input
-        v-model="ticker"
-        @keydown="isAdded = false"
-        @blur="isAdded = false"
-        @keydown.enter="addTicker"
-        class="ticker__input"
-        id="ticker"
-        type="text"
-        placeholder="Например DOGE"
-      >
-      <div
-        :class="{
-          'ticker__error--active': isAdded,
-        }"
-        class="ticker__error"
-        >Такой тикер уже добавлен</div
-      >
-      <button
-        @click="addTicker"
-        class="ticker__button"
-        >Добавить</button
-      >
-    </div>
-    <div
+    <add-ticker
+      @add-ticker="addTicker"
+      @update-is-added="isAdded = false"
+      :is-added="isAdded"
+    />
+    <section
       v-if="tickers.length"
       class="interface">
       <div>
@@ -57,8 +33,8 @@
           class="interface__button interface__button--next"
           >Вперед</button>
       </div>
-    </div>
-    <div
+    </section>
+    <section
       v-if="tickers.length"
       class="field"
     >
@@ -81,8 +57,8 @@
           Удалить
         </button>
       </div>
-    </div>
-    <div class="graph"
+    </section>
+    <section class="graph"
       v-if="selectedTicker"
     >
       <div class="graph__title">{{ selectedTicker.name }} - USD</div>
@@ -102,19 +78,23 @@
           class="graph__field-item"
         ></div>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 
 <script>
 import { subscribeToTicker, unsubscribeFromTicker } from './api';
+import AddTicker from './components/AddTicker.vue';
 
 export default {
   name: 'App',
 
+  components: {
+    AddTicker,
+  },
+
   data() {
     return {
-      ticker: null,
       tickers: [],
       selectedTicker: null,
 
@@ -195,9 +175,9 @@ export default {
   },
 
   methods: {
-    addTicker() {
+    addTicker(ticker) {
       const currentTicker = {
-        name: this.ticker.toUpperCase(),
+        name: ticker.toUpperCase(),
         price: '-',
       };
 
@@ -213,12 +193,10 @@ export default {
       // currentTicker.isInvalid = checkValidation();
 
       this.tickers = [...this.tickers, currentTicker];
-      this.ticker = '';
       this.filter = '';
-
-      console.log(currentTicker);
     },
     updateTicker(tickerName, price) {
+      // TODO: move next call out of here
       this.calculateMaxGraphElements();
       this.tickers
         .filter((t) => t.name === tickerName)
@@ -246,6 +224,9 @@ export default {
     },
     selectTicker(ticker) {
       this.selectedTicker = ticker;
+      // this.$nextTick(() => {
+      //   this.calculateMaxGraphElements();
+      // });
     },
     handleDelete(tickerToRemove) {
       this.tickers = this.tickers.filter((t) => t !== tickerToRemove);
