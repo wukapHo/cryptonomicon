@@ -58,39 +58,27 @@
         </button>
       </div>
     </section>
-    <section class="graph"
+    <ticker-graph
       v-if="selectedTicker"
-    >
-      <div class="graph__title">{{ selectedTicker.name }} - USD</div>
-      <button class="graph__clear-button"
-        @click="selectedTicker = null"
-      >
-      </button>
-      <div
-        ref="graph"
-        class="graph__field"
-      >
-        <div
-          v-for="(bar, idx) in normilizedGraph"
-          ref="graphElement"
-          :key="idx"
-          :style="{ height: `${bar}%` }"
-          class="graph__field-item"
-        ></div>
-      </div>
-    </section>
+      @reset-selected-ticker="selectedTicker = null"
+      @update-max-elements="updateTicker"
+      :selected-ticker="selectedTicker"
+      :graph="graph"
+    />
   </div>
 </template>
 
 <script>
 import { subscribeToTicker, unsubscribeFromTicker } from './api';
 import AddTicker from './components/AddTicker.vue';
+import TickerGraph from './components/TickerGraph.vue';
 
 export default {
   name: 'App',
 
   components: {
     AddTicker,
+    TickerGraph,
   },
 
   data() {
@@ -101,7 +89,6 @@ export default {
       isAdded: false,
 
       graph: [],
-      maxGraphElements: 1,
 
       coinList: [],
       page: 1,
@@ -128,15 +115,13 @@ export default {
     }
   },
 
-  mounted() {
-    // this.getCoinList();
-    window.addEventListener('resize', this.calculateMaxGraphElements);
-  },
+  // mounted() {
+  //   // this.getCoinList();
+  // },
 
-  beforeUnmount() {
-    // this.getCoinList();
-    window.removeEventListener('resize', this.calculateMaxGraphElements);
-  },
+  // beforeUnmount() {
+  //   // this.getCoinList();
+  // },
 
   computed: {
     startIdx() {
@@ -153,18 +138,6 @@ export default {
     },
     hasNextPage() {
       return this.filteredTickers.length > this.endIdx;
-    },
-    normilizedGraph() {
-      const maxValue = Math.max(...this.graph);
-      const minValue = Math.min(...this.graph);
-
-      if (minValue === maxValue) {
-        return this.graph.map(() => 50);
-      }
-
-      return this.graph.map(
-        (price) => 5 + ((price - minValue) * 95) / (maxValue - minValue),
-      );
     },
     pageStateOptions() {
       return {
@@ -196,14 +169,13 @@ export default {
       this.filter = '';
     },
     updateTicker(tickerName, price) {
-      // TODO: move next call out of here
-      this.calculateMaxGraphElements();
       this.tickers
         .filter((t) => t.name === tickerName)
         .forEach((t) => {
           if ((t) === this.selectedTicker) {
             this.graph.push(price);
             if (this.graph.length > this.maxGraphElements) {
+              console.log('its many');
               const idxForRemove = this.graph.length - this.maxGraphElements;
               this.graph = this.graph.slice(idxForRemove);
             }
@@ -211,10 +183,6 @@ export default {
           // eslint-disable-next-line no-param-reassign
           t.price = price;
         });
-    },
-    calculateMaxGraphElements() {
-      if (!this.$refs.graph || !this.$refs.graphElement) return;
-      this.maxGraphElements = this.$refs.graph.clientWidth / this.$refs.graphElement[0].clientWidth;
     },
     formatPrice(price) {
       if (price === '-') return price;
@@ -224,9 +192,6 @@ export default {
     },
     selectTicker(ticker) {
       this.selectedTicker = ticker;
-      // this.$nextTick(() => {
-      //   this.calculateMaxGraphElements();
-      // });
     },
     handleDelete(tickerToRemove) {
       this.tickers = this.tickers.filter((t) => t !== tickerToRemove);

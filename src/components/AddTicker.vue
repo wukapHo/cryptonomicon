@@ -1,5 +1,5 @@
 <template>
-  <div class="ticker">
+  <section class="ticker">
     <label
       class="ticker__label"
       for="ticker"
@@ -20,15 +20,16 @@
         'ticker__error--active': isAdded,
       }"
       class="ticker__error"
-      >Такой тикер уже добавлен</div
     >
+      Такой тикер уже добавлен
+    </div>
     <button
       @click="addTicker"
       class="ticker__button"
     >
       Добавить
     </button>
-  </div>
+  </section>
 </template>
 
 <script>
