@@ -86,13 +86,17 @@ export default {
   align-items: center;
   justify-content: flex-start;
   flex-wrap: wrap;
-  gap: 55px;
+  gap: 20px 5%;
   border-top: 3px solid #cccccc;
   border-bottom: 3px solid #cccccc;
 
+  @media (max-width: 768px) {
+    gap: 20px 6%;
+  }
+
   &__item {
-    height: 200px;
     width: 30%;
+    height: 200px;
     padding: 20px;
     display: flex;
     flex-direction: column;
@@ -102,6 +106,17 @@ export default {
     border: 4px solid transparent;
     border-radius: 10px;
     cursor: pointer;
+
+    @media (max-width: 768px) {
+      width: 47%;
+      height: 180px;
+      gap: 20px;
+    }
+
+    @media (max-width: 420px) {
+      width: 100%;
+      height: 160px;
+    }
 
     &--active {
       border: 4px solid #798d87;
@@ -115,26 +130,47 @@ export default {
   &__item-title {
     text-align: center;
     font-size: 18px;
+
+    @media (max-width: 420px) {
+      font-size: 16px;
+    }
   }
 
   &__item-rate {
     text-align: center;
     font-size: 28px;
+
+    @media (max-width: 768px) {
+      font-size: 26px;
+    }
+
+    @media (max-width: 420px) {
+      font-size: 22px;
+    }
   }
 
   &__item-button-delete {
-    width: 35%;
+    width: 100%;
     height: 30px;
     padding: 0 10px;
     border: none;
     border-radius: 10px;
     outline: none;
-    background: #ffffff url(../assets/cart-icon.svg) no-repeat center left 10px;
+    background: #f3f6f4 url(../assets/cart-icon.svg) no-repeat center left 20%;
     font-size: 16px;
-    text-align: right;
+    text-align: center;
     opacity: 0.6;
     cursor: pointer;
     transition: 0.3s;
+
+    @media (max-width: 768px) {
+      background-position: center left 10%;
+      background-size: 8%;
+    }
+
+    @media (max-width: 420px) {
+      font-size: 14px;
+    }
 
     &:hover {
       opacity: 1;
