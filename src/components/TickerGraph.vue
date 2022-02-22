@@ -85,7 +85,9 @@ export default {
     },
     calculateMaxGraphElements() {
       if (!this.$refs.graph || !this.$refs.graphElement) return;
-      this.maxGraphElements = this.$refs.graph.clientWidth / this.$refs.graphElement[0].clientWidth;
+      this.maxGraphElements = this.$refs.graph.clientWidth / 42;
+      // eslint-disable-next-line max-len
+      // this.maxGraphElements = this.$refs.graph.clientWidth / this.$refs.graphElement[0].clientWidth;
     },
   },
 

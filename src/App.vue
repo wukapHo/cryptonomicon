@@ -9,30 +9,13 @@
       :tickers="tickers"
       @paginate-tickers="paginatedTickers = $event"
     />
-    <section
-      v-if="tickers.length"
-      class="field"
-    >
-      <div
-        v-for="t in paginatedTickers"
-        :key="t.name"
-        @click="selectTicker(t)"
-        :class="{
-          'field__item--active': selectedTicker === t,
-          'field__item--invalid': t.isInvalid,
-        }"
-        class="field__item"
-      >
-        <div class="field__item-title">{{ t.name }} - USD</div>
-        <div class="field__item-rate">{{ formatPrice(t.price) }}</div>
-        <button
-          @click.stop="handleDelete(t)"
-          class="field__item-button-delete"
-        >
-          Удалить
-        </button>
-      </div>
-    </section>
+    <tickers-field
+      :tickers="tickers"
+      :paginated-tickers="paginatedTickers"
+      @select-ticker="selectedTicker = $event; graph = []"
+      @remove-ticker="tickers = $event"
+      @reset-selected-ticker="selectedTicker = null"
+    />
     <ticker-graph
       v-if="selectedTicker"
       :selected-ticker="selectedTicker"
@@ -45,9 +28,10 @@
 </template>
 
 <script>
-import { subscribeToTicker, unsubscribeFromTicker } from './api';
+import { subscribeToTicker } from './api';
 import AddTicker from './components/AddTicker.vue';
 import FilterPagination from './components/FilterPagination.vue';
+import TickersField from './components/TickersField.vue';
 import TickerGraph from './components/TickerGraph.vue';
 
 export default {
@@ -56,6 +40,7 @@ export default {
   components: {
     AddTicker,
     FilterPagination,
+    TickersField,
     TickerGraph,
   },
 
@@ -63,7 +48,6 @@ export default {
     return {
       tickers: [],
       selectedTicker: null,
-
       paginatedTickers: [],
 
       isAdded: false,
@@ -122,23 +106,6 @@ export default {
           t.price = price;
         });
     },
-    formatPrice(price) {
-      if (price === '-') return price;
-      return price > 1
-        ? price.toFixed(2)
-        : price.toPrecision(2);
-    },
-    selectTicker(ticker) {
-      this.selectedTicker = ticker;
-    },
-    handleDelete(tickerToRemove) {
-      this.tickers = this.tickers.filter((t) => t !== tickerToRemove);
-      if (this.selectedTicker === tickerToRemove) {
-        this.selectedTicker = null;
-        this.graph = [];
-      }
-      unsubscribeFromTicker(tickerToRemove.name);
-    },
     // async getCoinList() {
     //   const res = await fetch(
     //     'https://min-api.cryptocompare.com/data/all/coinlist?summary=true',
@@ -154,12 +121,6 @@ export default {
     },
     paginatedTickers() {
       localStorage.setItem('cryptonomicon-list-view', JSON.stringify(this.paginatedTickers));
-    },
-    selectedTicker() {
-      this.graph = [];
-    },
-    filter() {
-      this.page = 1;
     },
   },
 };

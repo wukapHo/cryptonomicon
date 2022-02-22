@@ -106,6 +106,9 @@ export default {
         `${window.location.pathname}?filter=${value.filter}&page=${value.page}`,
       );
     },
+    filter() {
+      this.page = 1;
+    },
   },
 };
 </script>
