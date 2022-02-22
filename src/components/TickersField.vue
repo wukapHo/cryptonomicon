@@ -77,3 +77,68 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.field {
+  margin-top: 20px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 55px;
+  border-top: 3px solid #cccccc;
+  border-bottom: 3px solid #cccccc;
+
+  &__item {
+    height: 200px;
+    width: 30%;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+    border: 4px solid transparent;
+    border-radius: 10px;
+    cursor: pointer;
+
+    &--active {
+      border: 4px solid #798d87;
+    }
+
+    &--invalid {
+      background-color: #f5756b;
+    }
+  }
+
+  &__item-title {
+    text-align: center;
+    font-size: 18px;
+  }
+
+  &__item-rate {
+    text-align: center;
+    font-size: 28px;
+  }
+
+  &__item-button-delete {
+    width: 35%;
+    height: 30px;
+    padding: 0 10px;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    background: #ffffff url(../assets/cart-icon.svg) no-repeat center left 10px;
+    font-size: 16px;
+    text-align: right;
+    opacity: 0.6;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+</style>

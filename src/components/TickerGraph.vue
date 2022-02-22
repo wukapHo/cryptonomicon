@@ -101,3 +101,53 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.graph {
+  width: 100%;
+  height: 300px;
+  margin-top: 20px;
+  position: relative;
+
+  &__title {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+  }
+
+  &__clear-button {
+    width: 25px;
+    height: 25px;
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    border: none;
+    border-radius: 50%;
+    background: #cccccc url(../assets/cross-icon.svg) no-repeat center;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      background-color: #798d87;
+    }
+  }
+
+  &__field {
+    height: 300px;
+    width: 100%;
+    position: absolute;
+    bottom: -50px;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    border-bottom: 1px solid #cccccc;
+    border-left: 1px solid #cccccc;
+  }
+
+  &__field-item {
+    width: 40px;
+    height: 60%;
+    background-color: #798d87;
+  }
+}
+</style>

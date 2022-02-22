@@ -74,3 +74,59 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.ticker {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  &__label {
+    font-size: 18px;
+  }
+
+  &__input {
+    height: 30px;
+    width: 300px;
+    padding: 0 15px;
+    border: 2px solid transparent;
+    outline: none;
+    border-radius: 15px;
+    font-size: 16px;
+    box-shadow: 0px 0px 19px -1px rgba(34, 60, 80, 0.13);
+
+    &:focus {
+      border: 2px solid #cccccc;
+    }
+  }
+
+  &__error {
+    color: #fa2020;
+    opacity: 0;
+
+    &--active {
+      opacity: 1;
+    }
+  }
+
+  &__button {
+    width: 150px;
+    height: 40px;
+    padding: 0 20px;
+    border: none;
+    outline: none;
+    border-radius: 20px;
+    background: #cccccc url(../assets/plus-icon.svg) no-repeat center left 20px;
+    color: #ffffff;
+    font-size: 18px;
+    text-align: right;
+    cursor: pointer;
+    transition: 0.3s;
+
+    &:hover {
+      background-color: #798d87;
+    }
+  }
+}
+</style>
