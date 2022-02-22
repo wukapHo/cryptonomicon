@@ -81,13 +81,17 @@ export default {
   flex-direction: column;
   gap: 20px;
 
+  @media (max-width: 768px) {
+    gap: 10px;
+  }
+
   &__label {
     font-size: 18px;
   }
 
   &__input {
     height: 30px;
-    width: 300px;
+    width: 220px;
     padding: 0 15px;
     border: 2px solid transparent;
     outline: none;
@@ -103,6 +107,10 @@ export default {
   &__error {
     color: #fa2020;
     opacity: 0;
+
+    @media (max-width: 768px) {
+      font-size: 14px;
+    }
 
     &--active {
       opacity: 1;
