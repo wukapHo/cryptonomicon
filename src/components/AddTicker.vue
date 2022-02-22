@@ -8,8 +8,7 @@
     </label>
     <input
       v-model="ticker"
-      @keydown="updateIsAdded"
-      @blur="updateIsAdded"
+      @blur="isAdded = false"
       @keydown.enter="addTicker"
       class="ticker__input"
       id="ticker"

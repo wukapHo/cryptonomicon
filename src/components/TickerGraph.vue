@@ -3,12 +3,10 @@
     <div class="graph__title">{{ selectedTicker.name }} - USD</div>
     <button class="graph__clear-button"
       @click="resetSelectedTicker"
-    >
-    </button>
+    ></button>
     <div
       ref="graph"
       class="graph__field"
-      @click="testMethod"
     >
       <div
         v-for="(bar, idx) in normalizedGraph"

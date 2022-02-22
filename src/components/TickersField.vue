@@ -42,17 +42,18 @@ export default {
         return [];
       },
     },
+    selectedTicker: {
+      type: Object,
+      default() {
+        return {};
+      },
+    },
   },
 
   emits: {
     'select-ticker': null,
+    'reset-selected-ticker': null,
     'remove-ticker': null,
-  },
-
-  data() {
-    return {
-      selectedTicker: null,
-    };
   },
 
   methods: {
@@ -63,8 +64,7 @@ export default {
         : price.toPrecision(2);
     },
     selectTicker(ticker) {
-      this.selectedTicker = ticker;
-      this.$emit('select-ticker', this.selectedTicker);
+      this.$emit('select-ticker', ticker);
     },
     handleDelete(tickerToRemove) {
       const updatedTickers = this.tickers.filter((t) => t !== tickerToRemove);

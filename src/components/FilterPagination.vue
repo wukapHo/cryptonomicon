@@ -1,7 +1,8 @@
 <template>
   <section
     v-if="tickers.length"
-    class="interface">
+    class="interface"
+  >
     <div>
       <label
         class="interface__label"

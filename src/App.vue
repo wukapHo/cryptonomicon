@@ -11,6 +11,7 @@
     <tickers-field
       :tickers="tickers"
       :paginated-tickers="paginatedTickers"
+      :selected-ticker="selectedTicker"
       @select-ticker="selectedTicker = $event; graph = []"
       @remove-ticker="tickers = $event"
       @reset-selected-ticker="selectedTicker = null"
@@ -46,13 +47,9 @@ export default {
   data() {
     return {
       tickers: [],
-      selectedTicker: null,
       paginatedTickers: [],
-
-      isAdded: false,
-
+      selectedTicker: null,
       graph: [],
-
       coinList: [],
     };
   },
@@ -67,11 +64,9 @@ export default {
         subscribeToTicker(ticker.name, (newPrice) => this.updateTicker(ticker.name, newPrice));
       });
     }
-  },
 
-  // mounted() {
-  //   // this.getCoinList();
-  // },
+    // this.getCoinList();
+  },
 
   methods: {
     addTicker(ticker) {
