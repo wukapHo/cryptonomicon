@@ -3,8 +3,9 @@
     <label
       class="ticker__label"
       for="ticker"
-      >Тикер</label
     >
+      Тикер
+    </label>
     <input
       v-model="ticker"
       @keydown="updateIsAdded"
@@ -37,7 +38,6 @@ export default {
   props: {
     isAdded: {
       type: Boolean,
-      required: true,
       default: false,
     },
   },

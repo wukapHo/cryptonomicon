@@ -1,39 +1,14 @@
 <template>
   <div class="container">
     <add-ticker
+      :is-added="isAdded"
       @add-ticker="addTicker"
       @update-is-added="isAdded = false"
-      :is-added="isAdded"
     />
-    <section
-      v-if="tickers.length"
-      class="interface">
-      <div>
-        <label
-          class="interface__label"
-          for="filter-input"
-          >Фильтр:</label
-        >
-        <input
-          v-model="filter"
-          class="interface__filter"
-          id="filter-input"
-          type="text"
-        >
-      </div>
-      <div class="interface__buttons">
-        <button
-          v-show="page > 1"
-          @click="page--"
-          class="interface__button interface__button--prev"
-          >Назад</button>
-        <button
-          v-show="hasNextPage"
-          @click="page++"
-          class="interface__button interface__button--next"
-          >Вперед</button>
-      </div>
-    </section>
+    <filter-pagination
+      :tickers="tickers"
+      @paginate-tickers="paginatedTickers = $event"
+    />
     <section
       v-if="tickers.length"
       class="field"
@@ -60,11 +35,11 @@
     </section>
     <ticker-graph
       v-if="selectedTicker"
+      :selected-ticker="selectedTicker"
+      :graph="graph"
       @reset-selected-ticker="selectedTicker = null"
       @update-max-elements="updateTicker"
       @graph-get-max="graph = graph.slice($event)"
-      :selected-ticker="selectedTicker"
-      :graph="graph"
     />
   </div>
 </template>
@@ -72,6 +47,7 @@
 <script>
 import { subscribeToTicker, unsubscribeFromTicker } from './api';
 import AddTicker from './components/AddTicker.vue';
+import FilterPagination from './components/FilterPagination.vue';
 import TickerGraph from './components/TickerGraph.vue';
 
 export default {
@@ -79,6 +55,7 @@ export default {
 
   components: {
     AddTicker,
+    FilterPagination,
     TickerGraph,
   },
 
@@ -87,28 +64,19 @@ export default {
       tickers: [],
       selectedTicker: null,
 
+      paginatedTickers: [],
+
       isAdded: false,
 
       graph: [],
 
       coinList: [],
-
-      page: 1,
-      tickersPerPage: 6,
-      filter: '',
     };
   },
 
   created() {
-    const windowData = Object.fromEntries(new URL(window.location).searchParams.entries());
-    const VALID_KEYS = ['filter', 'page'];
-    VALID_KEYS.forEach((key) => {
-      if (windowData[key]) {
-        this[key] = windowData[key];
-      }
-    });
-
     const tickersData = localStorage.getItem('cryptonomicon-list');
+    this.paginatedTickers = JSON.parse(localStorage.getItem('cryptonomicon-list-view'));
 
     if (tickersData) {
       this.tickers = JSON.parse(tickersData);
@@ -121,30 +89,6 @@ export default {
   // mounted() {
   //   // this.getCoinList();
   // },
-
-  computed: {
-    startIdx() {
-      return this.tickersPerPage * (this.page - 1);
-    },
-    endIdx() {
-      return this.tickersPerPage * this.page;
-    },
-    filteredTickers() {
-      return this.tickers.filter((t) => t.name.includes(this.filter.toUpperCase()));
-    },
-    paginatedTickers() {
-      return this.filteredTickers.slice(this.startIdx, this.endIdx);
-    },
-    hasNextPage() {
-      return this.filteredTickers.length > this.endIdx;
-    },
-    pageStateOptions() {
-      return {
-        filter: this.filter,
-        page: this.page,
-      };
-    },
-  },
 
   methods: {
     addTicker(ticker) {
@@ -209,22 +153,13 @@ export default {
       localStorage.setItem('cryptonomicon-list', JSON.stringify(this.tickers));
     },
     paginatedTickers() {
-      if (this.paginatedTickers.length === 0 && this.page > 1) {
-        this.page -= 1;
-      }
+      localStorage.setItem('cryptonomicon-list-view', JSON.stringify(this.paginatedTickers));
     },
     selectedTicker() {
       this.graph = [];
     },
     filter() {
       this.page = 1;
-    },
-    pageStateOptions(value) {
-      window.history.pushState(
-        null,
-        document.title,
-        `${window.location.pathname}?filter=${value.filter}&page=${value.page}`,
-      );
     },
   },
 };

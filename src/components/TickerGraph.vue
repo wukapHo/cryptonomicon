@@ -27,11 +27,15 @@ export default {
   props: {
     selectedTicker: {
       type: Object,
-      required: false,
+      default() {
+        return {};
+      },
     },
     graph: {
       type: Array,
-      required: false,
+      default() {
+        return [];
+      },
     },
   },
 
