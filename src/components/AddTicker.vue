@@ -36,31 +36,40 @@
 <script>
 export default {
   props: {
-    isAdded: {
-      type: Boolean,
-      default: false,
+    tickers: {
+      type: Array,
+      default() {
+        return [];
+      },
     },
   },
 
   emits: {
     'add-ticker': (value) => typeof value === 'string' && value.length > 0,
-    'update-is-added': null,
   },
 
   data() {
     return {
       ticker: '',
+      isAdded: false,
     };
   },
 
   methods: {
     addTicker() {
       if (this.ticker.length === 0) return;
+      if (this.tickers.find((t) => t.name.toUpperCase() === this.ticker.toUpperCase())) {
+        this.isAdded = true;
+        return;
+      }
       this.$emit('add-ticker', this.ticker);
       this.ticker = '';
     },
-    updateIsAdded() {
-      this.$emit('update-is-added');
+  },
+
+  watch: {
+    ticker() {
+      this.isAdded = false;
     },
   },
 };

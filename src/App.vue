@@ -1,9 +1,8 @@
 <template>
   <div class="container">
     <add-ticker
-      :is-added="isAdded"
+      :tickers="tickers"
       @add-ticker="addTicker"
-      @update-is-added="isAdded = false"
     />
     <filter-pagination
       :tickers="tickers"
@@ -80,11 +79,6 @@ export default {
         name: ticker.toUpperCase(),
         price: '-',
       };
-
-      if (this.tickers.find((t) => t.name.toUpperCase() === currentTicker.name.toUpperCase())) {
-        this.isAdded = true;
-        return;
-      }
 
       currentTicker.isInvalid = subscribeToTicker(
         currentTicker.name,
