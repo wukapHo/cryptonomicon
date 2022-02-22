@@ -62,6 +62,7 @@
       v-if="selectedTicker"
       @reset-selected-ticker="selectedTicker = null"
       @update-max-elements="updateTicker"
+      @graph-get-max="graph = graph.slice($event)"
       :selected-ticker="selectedTicker"
       :graph="graph"
     />
@@ -91,7 +92,9 @@ export default {
       graph: [],
 
       coinList: [],
+
       page: 1,
+      tickersPerPage: 6,
       filter: '',
     };
   },
@@ -119,16 +122,12 @@ export default {
   //   // this.getCoinList();
   // },
 
-  // beforeUnmount() {
-  //   // this.getCoinList();
-  // },
-
   computed: {
     startIdx() {
-      return 6 * (this.page - 1);
+      return this.tickersPerPage * (this.page - 1);
     },
     endIdx() {
-      return 6 * this.page;
+      return this.tickersPerPage * this.page;
     },
     filteredTickers() {
       return this.tickers.filter((t) => t.name.includes(this.filter.toUpperCase()));
@@ -173,12 +172,7 @@ export default {
         .filter((t) => t.name === tickerName)
         .forEach((t) => {
           if ((t) === this.selectedTicker) {
-            this.graph.push(price);
-            if (this.graph.length > this.maxGraphElements) {
-              console.log('its many');
-              const idxForRemove = this.graph.length - this.maxGraphElements;
-              this.graph = this.graph.slice(idxForRemove);
-            }
+            this.graph = [...this.graph, price];
           }
           // eslint-disable-next-line no-param-reassign
           t.price = price;

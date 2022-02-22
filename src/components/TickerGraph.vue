@@ -35,9 +35,15 @@ export default {
     },
   },
 
+  emits: {
+    'update-max-elements': null,
+    'reset-selected-ticker': null,
+    'graph-get-max': null,
+  },
+
   data() {
     return {
-      maxGraphElements: 1,
+      maxGraphElements: 5,
     };
   },
 
@@ -76,6 +82,15 @@ export default {
     calculateMaxGraphElements() {
       if (!this.$refs.graph || !this.$refs.graphElement) return;
       this.maxGraphElements = this.$refs.graph.clientWidth / this.$refs.graphElement[0].clientWidth;
+    },
+  },
+
+  watch: {
+    graph() {
+      if (this.graph.length > this.maxGraphElements) {
+        const idxForRemove = Math.ceil(this.graph.length - this.maxGraphElements);
+        this.$emit('graph-get-max', idxForRemove);
+      }
     },
   },
 };
