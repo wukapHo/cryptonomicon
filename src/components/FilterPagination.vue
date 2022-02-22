@@ -122,6 +122,12 @@ export default {
   justify-content: space-between;
   border-top: 3px solid #cccccc;
 
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
   &__filter {
     height: 30px;
     margin-left: 10px;
@@ -130,6 +136,10 @@ export default {
     border-radius: 10px;
     outline: none;
     font-size: 16px;
+
+    @media (max-width: 420px) {
+      width: 145px;
+    }
 
     &:focus {
       border: 1px solid #000000;
@@ -140,6 +150,10 @@ export default {
     width: 210px;
     height: 30px;
     position: relative;
+
+    @media (max-width: 420px) {
+      width: 100%;
+    }
   }
 
   &__button {
