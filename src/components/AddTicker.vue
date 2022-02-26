@@ -10,6 +10,7 @@
       v-model="ticker"
       @blur="isAdded = false"
       @keydown.enter="addTicker"
+      @input="suggestAutoCompletion"
       class="ticker__input"
       id="ticker"
       type="text"
@@ -33,6 +34,8 @@
 </template>
 
 <script>
+import { getCoinListFromApi } from '../api';
+
 export default {
   props: {
     tickers: {
@@ -44,14 +47,20 @@ export default {
   },
 
   emits: {
-    'add-ticker': (value) => typeof value === 'string' && value.length > 0,
+    'add-ticker': null,
   },
 
   data() {
     return {
       ticker: '',
       isAdded: false,
+      isInvalid: false,
+      coinList: null,
     };
+  },
+
+  created() {
+    this.getCoinList();
   },
 
   methods: {
@@ -61,8 +70,35 @@ export default {
         this.isAdded = true;
         return;
       }
-      this.$emit('add-ticker', this.ticker);
+
+      // eslint-disable-next-line no-restricted-syntax
+      if (this.coinList.find((coin) => coin === this.ticker.toUpperCase())) {
+        this.isInvalid = false;
+      } else {
+        this.isInvalid = true;
+      }
+
+      this.$emit('add-ticker', { ticker: this.ticker, isInvalid: this.isInvalid });
       this.ticker = '';
+    },
+    async getCoinList() {
+      const coinData = await getCoinListFromApi();
+      // eslint-disable-next-line prefer-destructuring
+      this.coinList = Object.keys(Object.entries(coinData)[5][1]);
+      // console.log(this.coinList);
+    },
+    suggestAutoCompletion() {
+      // eslint-disable-next-line max-len
+      // const autoCompletionList = this.coinList.filter((c) => c[1].FullName.indexOf(this.ticker) === 0);
+      // console.log(autoCompletionList);
+      // console.log(autoCompletionList.map((item) => item[1].Symbol));
+
+      // eslint-disable-next-line no-restricted-syntax
+      // this.coinList.forEach((coin) => {
+      //   // if (coin.indexOf(this.ticker.toUpperCase()) === 0) {
+      //   //   console.log(coin);
+      //   // }
+      // });
     },
   },
 

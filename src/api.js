@@ -1,14 +1,10 @@
 const API_KEY = '01cc57dbd6f92665196c81d27c44abbf0ba27846387d09ad352a8242a91c7ea2';
+const AGGREGATE_INDEX = '5';
 
 const tickersHandlers = new Map();
 const socket = new WebSocket(
   `wss://streamer.cryptocompare.com/v2?api_key=${API_KEY}`,
 );
-
-const AGGREGATE_INDEX = '5';
-const INVALID_CODE = '500';
-const SUBSCRIBECOMPLETE_CODE = '16';
-let isInvalid = false;
 
 socket.addEventListener('message', (e) => {
   const { TYPE: type, FROMSYMBOL: currency, PRICE: newPrice } = JSON.parse(e.data);
@@ -19,15 +15,6 @@ socket.addEventListener('message', (e) => {
 
   const handlers = tickersHandlers.get(currency) ?? [];
   handlers.forEach((fn) => fn(newPrice));
-});
-
-socket.addEventListener('message', (e) => {
-  const { TYPE: type, MESSAGE: message } = JSON.parse(e.data);
-  if (type === INVALID_CODE && message === 'INVALID_SUB') {
-    isInvalid = true;
-  } else if (type === SUBSCRIBECOMPLETE_CODE) {
-    isInvalid = false;
-  }
 });
 
 function sendToWebSocket(message) {
@@ -61,7 +48,6 @@ export const subscribeToTicker = (ticker, cb) => {
   const subscribers = tickersHandlers.get(ticker) || [];
   tickersHandlers.set(ticker, [...subscribers, cb]);
   subscribeToTickerOnWs(ticker);
-  return isInvalid;
 };
 
 export const unsubscribeFromTicker = (ticker) => {
@@ -69,9 +55,10 @@ export const unsubscribeFromTicker = (ticker) => {
   unsubscribeFromTickerOnWs(ticker);
 };
 
-// export const checkValidation = () => isInvalid;
-
-// export async function getCoinList() {
-//   return fetch('https://min-api.cryptocompare.com/data/all/coinlist?summary=true')
-//     .then((res) => res.json());
-// }
+export async function getCoinListFromApi() {
+  const res = await fetch(
+    `https://min-api.cryptocompare.com/data/blockchain/list?&api_key=${API_KEY}`,
+  );
+  const data = await res.json();
+  return data;
+}

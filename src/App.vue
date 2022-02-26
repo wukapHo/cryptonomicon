@@ -64,22 +64,20 @@ export default {
         subscribeToTicker(ticker.name, (newPrice) => this.updateTicker(ticker.name, newPrice));
       });
     }
-
-    // this.getCoinList();
   },
 
   methods: {
-    addTicker(ticker) {
+    addTicker(tickerData) {
       const currentTicker = {
-        name: ticker.toUpperCase(),
+        name: tickerData.ticker.toUpperCase(),
         price: '-',
+        isInvalid: tickerData.isInvalid,
       };
 
-      currentTicker.isInvalid = subscribeToTicker(
+      subscribeToTicker(
         currentTicker.name,
         (newPrice) => this.updateTicker(currentTicker.name, newPrice),
       );
-      // currentTicker.isInvalid = checkValidation();
 
       this.tickers = [...this.tickers, currentTicker];
       this.filter = '';
@@ -95,13 +93,6 @@ export default {
           t.price = price;
         });
     },
-    // async getCoinList() {
-    //   const res = await fetch(
-    //     'https://min-api.cryptocompare.com/data/all/coinlist?summary=true',
-    //   );
-    //   const data = await res.json();
-    //   this.coinList = data.Data;
-    // },
   },
 
   watch: {
