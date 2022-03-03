@@ -1,5 +1,5 @@
-# Cryptonomicon 
-[Deploy Link](https://cryptonomicon.netlify.app/).
+# Cryptonomicon
+Application showing the cryptocurrency exchange rate. [Deploy Link](https://cryptonomicon.netlify.app/).
 
 ## Project setup
 ```
