@@ -1,7 +1,5 @@
 # Cryptonomicon 
-```
 [Deploy Link](https://cryptonomicon.netlify.app/).
-```
 
 ## Project setup
 ```
