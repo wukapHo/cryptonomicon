@@ -90,6 +90,12 @@ export default {
     },
   },
 
+  watch: {
+    ticker() {
+      this.isAdded = false;
+    },
+  },
+
   created() {
     this.getCoinList();
   },
@@ -102,7 +108,6 @@ export default {
         return;
       }
 
-      // eslint-disable-next-line no-restricted-syntax
       if (this.coinList.find((coin) => coin === tickerName.toUpperCase())) {
         this.isInvalid = false;
       } else {
@@ -116,12 +121,6 @@ export default {
       const coinData = await getCoinListFromApi();
       // [5][1] to get a list of currencies from the api
       this.coinList = Object.keys(Object.entries(coinData)[5][1]);
-    },
-  },
-
-  watch: {
-    ticker() {
-      this.isAdded = false;
     },
   },
 };

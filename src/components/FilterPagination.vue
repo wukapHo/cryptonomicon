@@ -59,16 +59,6 @@ export default {
     };
   },
 
-  created() {
-    const windowData = Object.fromEntries(new URL(window.location).searchParams.entries());
-    const VALID_KEYS = ['filter', 'page'];
-    VALID_KEYS.forEach((key) => {
-      if (windowData[key]) {
-        this[key] = windowData[key];
-      }
-    });
-  },
-
   computed: {
     startIdx() {
       return this.tickersPerPage * (this.page - 1);
@@ -110,6 +100,16 @@ export default {
     filter() {
       this.page = 1;
     },
+  },
+
+  created() {
+    const windowData = Object.fromEntries(new URL(window.location).searchParams.entries());
+    const VALID_KEYS = ['filter', 'page'];
+    VALID_KEYS.forEach((key) => {
+      if (windowData[key]) {
+        this[key] = windowData[key];
+      }
+    });
   },
 };
 </script>

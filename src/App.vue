@@ -54,6 +54,15 @@ export default {
     };
   },
 
+  watch: {
+    tickers() {
+      localStorage.setItem('cryptonomicon-list', JSON.stringify(this.tickers));
+    },
+    paginatedTickers() {
+      localStorage.setItem('cryptonomicon-list-view', JSON.stringify(this.paginatedTickers));
+    },
+  },
+
   created() {
     const tickersData = localStorage.getItem('cryptonomicon-list');
     this.paginatedTickers = JSON.parse(localStorage.getItem('cryptonomicon-list-view'));
@@ -92,15 +101,6 @@ export default {
           // eslint-disable-next-line no-param-reassign
           t.price = price;
         });
-    },
-  },
-
-  watch: {
-    tickers() {
-      localStorage.setItem('cryptonomicon-list', JSON.stringify(this.tickers));
-    },
-    paginatedTickers() {
-      localStorage.setItem('cryptonomicon-list-view', JSON.stringify(this.paginatedTickers));
     },
   },
 };

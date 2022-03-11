@@ -49,19 +49,6 @@ export default {
     };
   },
 
-  mounted() {
-    window.addEventListener('resize', this.calculateMaxGraphElements);
-  },
-
-  beforeUpdate() {
-    this.calculateMaxGraphElements();
-    this.$emit('update-max-elements', this.maxGraphElements);
-  },
-
-  beforeUnmount() {
-    window.removeEventListener('resize', this.calculateMaxGraphElements);
-  },
-
   computed: {
     normalizedGraph() {
       const maxValue = Math.max(...this.graph);
@@ -77,6 +64,28 @@ export default {
     },
   },
 
+  watch: {
+    graph() {
+      if (this.graph.length > this.maxGraphElements) {
+        const idxForRemove = Math.ceil(this.graph.length - this.maxGraphElements);
+        this.$emit('graph-get-max', idxForRemove);
+      }
+    },
+  },
+
+  mounted() {
+    window.addEventListener('resize', this.calculateMaxGraphElements);
+  },
+
+  beforeUpdate() {
+    this.calculateMaxGraphElements();
+    this.$emit('update-max-elements', this.maxGraphElements);
+  },
+
+  beforeUnmount() {
+    window.removeEventListener('resize', this.calculateMaxGraphElements);
+  },
+
   methods: {
     resetSelectedTicker() {
       this.$emit('reset-selected-ticker');
@@ -86,15 +95,6 @@ export default {
       this.maxGraphElements = this.$refs.graph.clientWidth / 42;
       // eslint-disable-next-line max-len
       // this.maxGraphElements = this.$refs.graph.clientWidth / this.$refs.graphElement[0].clientWidth;
-    },
-  },
-
-  watch: {
-    graph() {
-      if (this.graph.length > this.maxGraphElements) {
-        const idxForRemove = Math.ceil(this.graph.length - this.maxGraphElements);
-        this.$emit('graph-get-max', idxForRemove);
-      }
     },
   },
 };
