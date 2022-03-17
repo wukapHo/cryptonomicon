@@ -10,28 +10,28 @@
       >
         Фильтр:
       </label>
-      <input
-        v-model="filter"
-        class="interface__filter"
+      <base-input
         id="filter-input"
         type="text"
-      >
+        v-model="filter"
+        @update:modelValue="filter = $event"
+      ></base-input>
     </div>
     <div class="interface__buttons">
-      <button
+      <base-button
         v-show="page > 1"
-        @click="page--"
+        @click="page -= 1"
         class="interface__button interface__button--prev"
       >
         Назад
-      </button>
-      <button
+      </base-button>
+      <base-button
         v-show="hasNextPage"
-        @click="page++"
+        @click="page += 1"
         class="interface__button interface__button--next"
       >
-        Вперед
-      </button>
+        Вперёд
+      </base-button>
     </div>
   </section>
 </template>
@@ -116,7 +116,7 @@ export default {
 
 <style lang="scss">
 .interface {
-  padding: 20px 20px 0;
+  padding: 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -128,28 +128,10 @@ export default {
     align-items: flex-start;
   }
 
-  &__filter {
-    height: 30px;
-    margin-left: 10px;
-    padding: 0 10px;
-    border: 1px solid #cccccc;
-    border-radius: 10px;
-    outline: none;
-    font-size: 16px;
-
-    @media (max-width: 420px) {
-      width: 145px;
-    }
-
-    &:focus {
-      border: 1px solid #000000;
-    }
-  }
-
   &__buttons {
-    width: 210px;
-    height: 30px;
     position: relative;
+    height: 30px;
+    width: 180px;
 
     @media (max-width: 420px) {
       width: 100%;
@@ -157,23 +139,6 @@ export default {
   }
 
   &__button {
-    width: 100px;
-    height: 30px;
-    padding: 0 20px;
-    border: none;
-    outline: none;
-    border-radius: 20px;
-    background-color: #cccccc;
-    color: #ffffff;
-    font-size: 18px;
-    text-align: center;
-    cursor: pointer;
-    transition: 0.3s;
-
-    &:hover {
-      background-color: #798d87;
-    }
-
     &--prev {
       position: absolute;
       left: 0;
@@ -184,5 +149,10 @@ export default {
       right: 0;
     }
   }
+}
+
+.base-button.interface__button {
+  width: 85px;
+  padding: 0;
 }
 </style>

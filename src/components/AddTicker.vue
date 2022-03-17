@@ -6,16 +6,24 @@
     >
       Тикер
     </label>
-    <div class="">
-      <input
-        v-model="ticker"
-        @blur="isAdded = false"
-        @keydown.enter="addTicker(ticker)"
-        class="ticker__input"
+    <div class="ticker__input-wrapper">
+      <div
+        :class="{
+          'ticker__error--active': isAdded,
+        }"
+        class="ticker__error"
+      >
+        Такой тикер уже добавлен
+      </div>
+      <base-input
         id="ticker"
         type="text"
         placeholder="Например BTC"
-      >
+        v-model="ticker"
+        @update:modelValue="ticker = $event"
+        @blur="isAdded = false"
+        @keydown.enter="addTicker(ticker)"
+      ></base-input>
       <div
         class="ticker__auto"
         :class="{
@@ -30,20 +38,12 @@
         >{{ autoCompletionList[idx] }}</div>
       </div>
     </div>
-    <div
-      :class="{
-        'ticker__error--active': isAdded,
-      }"
-      class="ticker__error"
-    >
-      Такой тикер уже добавлен
-    </div>
-    <button
-      @click="addTicker"
+    <base-button
+      @click="addTicker(ticker)"
       class="ticker__button"
     >
       Добавить
-    </button>
+    </base-button>
   </section>
 </template>
 
@@ -119,7 +119,7 @@ export default {
     },
     async getCoinList() {
       const coinData = await getCoinListFromApi();
-      // [5][1] to get a list of currencies from the api
+      // [5][1] to get array list of currencies from the api
       this.coinList = Object.keys(Object.entries(coinData)[5][1]);
     },
   },
@@ -128,31 +128,28 @@ export default {
 
 <style lang="scss">
 .ticker {
-  display: flex;
   padding: 20px;
-  flex-direction: column;
-  gap: 20px;
+  display: flex;
+  align-items: center;
 
   @media (max-width: 768px) {
-    gap: 10px;
+    flex-direction: column;
+    align-items: flex-start;
   }
 
   &__label {
     font-size: 18px;
+
+    @media (max-width: 768px) {
+      margin-left: 15px;
+    }
   }
 
-  &__input {
-    height: 30px;
-    width: 220px;
-    padding: 0 15px;
-    font-size: 16px;
-    border: 2px solid transparent;
-    border-radius: 15px;
-    outline: none;
-    box-shadow: 0px 0px 19px -1px rgba(34, 60, 80, 0.13);
+  &__input-wrapper {
+    margin-left: 20px;
 
-    &:focus {
-      border: 2px solid #cccccc;
+    @media (max-width: 768px) {
+      margin: 10px 0;
     }
   }
 
@@ -162,11 +159,6 @@ export default {
     width: 220px;
     height: 20px;
     padding: 0 10px;
-    // opacity: 0;
-
-    // &--active {
-    //   opacity: 1;
-    // }
   }
 
   &__auto-item {
@@ -186,6 +178,8 @@ export default {
   }
 
   &__error {
+    margin-bottom: 5px;
+    padding: 0 12px;
     color: #fa2020;
     opacity: 0;
 
@@ -197,24 +191,19 @@ export default {
       opacity: 1;
     }
   }
+}
 
-  &__button {
-    width: 150px;
-    height: 40px;
-    padding: 0 20px;
-    color: #ffffff;
-    font-size: 18px;
-    text-align: right;
-    border: none;
-    border-radius: 20px;
-    outline: none;
-    background: #cccccc url(../assets/plus-icon.svg) no-repeat center left 20px;
-    cursor: pointer;
-    transition: 0.3s;
+.base-button.ticker__button {
+  margin-left: 20px;
+  width: 150px;
+  height: 40px;
+  text-align: right;
+  background-image: url(../assets/plus-icon.svg);
+  background-position: center left 20px;
+  background-repeat: no-repeat;
 
-    &:hover {
-      background-color: #798d87;
-    }
+  @media (max-width: 768px) {
+    margin-left: 0;
   }
 }
 </style>

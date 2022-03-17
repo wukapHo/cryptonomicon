@@ -15,12 +15,12 @@
     >
       <div class="field__item-title">{{ t.name }} - USD</div>
       <div class="field__item-rate">{{ formatPrice(t.price) }}</div>
-      <button
+      <base-button
         @click.stop="handleDelete(t)"
         class="field__item-button-delete"
       >
         Удалить
-      </button>
+      </base-button>
     </div>
   </section>
 </template>
@@ -71,8 +71,8 @@ export default {
       if (this.selectedTicker === tickerToRemove) {
         this.$emit('reset-selected-ticker');
       }
-      this.$emit('remove-ticker', updatedTickers);
       unsubscribeFromTicker(tickerToRemove.name);
+      this.$emit('remove-ticker', updatedTickers);
     },
   },
 };
@@ -80,14 +80,12 @@ export default {
 
 <style lang="scss">
 .field {
-  margin-top: 20px;
-  padding: 20px;
+  padding: 0 20px 20px;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   flex-wrap: wrap;
   gap: 20px 5%;
-  border-top: 3px solid #cccccc;
   border-bottom: 3px solid #cccccc;
 
   @media (max-width: 768px) {
@@ -123,7 +121,7 @@ export default {
     }
 
     &--invalid {
-      background-color: #f5756b;
+      outline: 4px solid #ff0000;
     }
   }
 
@@ -148,33 +146,13 @@ export default {
       font-size: 22px;
     }
   }
+}
 
-  &__item-button-delete {
-    width: 100%;
-    height: 30px;
-    padding: 0 10px;
-    border: none;
-    border-radius: 10px;
-    outline: none;
-    background: #f3f6f4 url(../assets/cart-icon.svg) no-repeat center left 20%;
-    font-size: 16px;
-    text-align: center;
-    opacity: 0.6;
-    cursor: pointer;
-    transition: 0.3s;
-
-    @media (max-width: 768px) {
-      background-position: center left 10%;
-      background-size: 8%;
-    }
-
-    @media (max-width: 420px) {
-      font-size: 14px;
-    }
-
-    &:hover {
-      opacity: 1;
-    }
-  }
+.base-button.field__item-button-delete {
+  width: 140px;
+  text-align: right;
+  background-image: url(../assets/cart-icon.svg);
+  background-position: center left 20px;
+  background-repeat: no-repeat;
 }
 </style>

@@ -46,6 +46,7 @@ export default {
   data() {
     return {
       maxGraphElements: 5,
+      graphElementWidth: 42,
     };
   },
 
@@ -92,9 +93,7 @@ export default {
     },
     calculateMaxGraphElements() {
       if (!this.$refs.graph || !this.$refs.graphElement) return;
-      this.maxGraphElements = this.$refs.graph.clientWidth / 42;
-      // eslint-disable-next-line max-len
-      // this.maxGraphElements = this.$refs.graph.clientWidth / this.$refs.graphElement[0].clientWidth;
+      this.maxGraphElements = this.$refs.graph.clientWidth / this.graphElementWidth;
     },
   },
 };
@@ -131,10 +130,11 @@ export default {
   }
 
   &__field {
-    height: 300px;
-    width: 100%;
     position: absolute;
     bottom: -50px;
+    padding: 20px 0;
+    width: 100%;
+    height: 300px;
     display: flex;
     align-items: flex-end;
     gap: 2px;
