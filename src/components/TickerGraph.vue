@@ -1,6 +1,6 @@
 <template>
   <section class="graph">
-    <div class="graph__title">{{ selectedTicker.name }} - USD</div>
+    <div>{{ selectedTicker.name }} - USD</div>
     <button class="graph__clear-button"
       @click="resetSelectedTicker"
     ></button>
@@ -70,6 +70,7 @@ export default {
       if (this.graph.length > this.maxGraphElements) {
         const idxForRemove = Math.ceil(this.graph.length - this.maxGraphElements);
         this.$emit('graph-get-max', idxForRemove);
+        console.log(idxForRemove);
       }
     },
   },
@@ -101,16 +102,9 @@ export default {
 
 <style lang="scss">
 .graph {
-  width: 100%;
-  height: 300px;
-  margin-top: 20px;
   position: relative;
-
-  &__title {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-  }
+  padding: 20px;
+  width: 100%;
 
   &__clear-button {
     width: 25px;
@@ -130,9 +124,7 @@ export default {
   }
 
   &__field {
-    position: absolute;
-    bottom: -50px;
-    padding: 20px 0;
+    margin-top: 20px;
     width: 100%;
     height: 300px;
     display: flex;

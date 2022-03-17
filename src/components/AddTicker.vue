@@ -18,7 +18,7 @@
       <base-input
         id="ticker"
         type="text"
-        placeholder="Например BTC"
+        placeholder="BTC, ETH, DOGE и др."
         v-model="ticker"
         @update:modelValue="ticker = $event"
         @blur="isAdded = false"
@@ -42,7 +42,7 @@
       @click="addTicker(ticker)"
       class="ticker__button"
     >
-      Добавить
+      Тикер
     </base-button>
   </section>
 </template>
@@ -138,16 +138,10 @@ export default {
   }
 
   &__label {
-    font-size: 18px;
-
-    @media (max-width: 768px) {
-      margin-left: 15px;
-    }
+    display: none;
   }
 
   &__input-wrapper {
-    margin-left: 20px;
-
     @media (max-width: 768px) {
       margin: 10px 0;
     }
@@ -196,8 +190,6 @@ export default {
 .base-button.ticker__button {
   margin-left: 20px;
   width: 150px;
-  height: 40px;
-  text-align: right;
   background-image: url(../assets/plus-icon.svg);
   background-position: center left 20px;
   background-repeat: no-repeat;

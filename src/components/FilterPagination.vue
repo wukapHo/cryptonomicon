@@ -13,6 +13,7 @@
       <base-input
         id="filter-input"
         type="text"
+        placeholder="Фильтр"
         v-model="filter"
         @update:modelValue="filter = $event"
       ></base-input>
@@ -126,6 +127,10 @@ export default {
     flex-direction: column;
     gap: 10px;
     align-items: flex-start;
+  }
+
+  &__label {
+    display: none;
   }
 
   &__buttons {
