@@ -1,0 +1,10 @@
+{
+  "content": {
+    "add": "Тикер",
+    "delete": "Удалить",
+    "next": "Вперёд",
+    "prev": "Назад",
+    "tickerPlaceholder": "BTC, ETH, DOGE, и др.",
+    "filterPlaceholder": "Фильтр"
+  }
+}

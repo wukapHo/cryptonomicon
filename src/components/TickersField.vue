@@ -19,7 +19,7 @@
         @click.stop="handleDelete(t)"
         class="field__item-button-delete"
       >
-        Удалить
+        {{ $t('content.delete') }}
       </base-button>
     </div>
   </section>

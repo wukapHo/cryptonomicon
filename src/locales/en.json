@@ -1,0 +1,10 @@
+{
+  "content": {
+    "add": "Ticker",
+    "delete": "Delete",
+    "next": "Next",
+    "prev": "Prev",
+    "tickerPlaceholder": "BTC, ETH, DOGE, etc.",
+    "filterPlaceholder": "Filter"
+  }
+}

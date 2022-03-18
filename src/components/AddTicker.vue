@@ -18,7 +18,7 @@
       <base-input
         id="ticker"
         type="text"
-        placeholder="BTC, ETH, DOGE и др."
+        :placeholder="$t('content.tickerPlaceholder')"
         v-model="ticker"
         @update:modelValue="ticker = $event"
         @blur="isAdded = false"
@@ -42,7 +42,7 @@
       @click="addTicker(ticker)"
       class="ticker__button"
     >
-      Тикер
+      {{ $t('content.add') }}
     </base-button>
   </section>
 </template>

@@ -4,6 +4,7 @@
       :tickers="tickers"
       @add-ticker="addTicker"
     />
+    <locale-switcher />
     <filter-pagination
       :tickers="tickers"
       @paginate-tickers="paginatedTickers = $event"
@@ -33,6 +34,7 @@ import AddTicker from './components/AddTicker.vue';
 import FilterPagination from './components/FilterPagination.vue';
 import TickersField from './components/TickersField.vue';
 import TickerGraph from './components/TickerGraph.vue';
+import LocaleSwitcher from './components/LocaleSwitcher.vue';
 
 export default {
   name: 'App',
@@ -42,6 +44,7 @@ export default {
     FilterPagination,
     TickersField,
     TickerGraph,
+    LocaleSwitcher,
   },
 
   data() {

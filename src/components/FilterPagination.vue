@@ -13,7 +13,7 @@
       <base-input
         id="filter-input"
         type="text"
-        placeholder="Фильтр"
+        :placeholder="$t('content.filterPlaceholder')"
         v-model="filter"
         @update:modelValue="filter = $event"
       ></base-input>
@@ -24,14 +24,14 @@
         @click="page -= 1"
         class="interface__button interface__button--prev"
       >
-        Назад
+        {{ $t('content.prev') }}
       </base-button>
       <base-button
         v-show="hasNextPage"
         @click="page += 1"
         class="interface__button interface__button--next"
       >
-        Вперёд
+        {{ $t('content.next') }}
       </base-button>
     </div>
   </section>
