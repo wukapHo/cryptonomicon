@@ -43,7 +43,7 @@ export default {
 .switcher {
   position: absolute;
   top: 40px;
-  right: 30px;
+  right: 40px;
   width: 70px;
   display: flex;
   align-items: center;
