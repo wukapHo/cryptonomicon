@@ -4,7 +4,8 @@
     "delete": "Удалить",
     "next": "Вперёд",
     "prev": "Назад",
-    "tickerPlaceholder": "BTC, ETH, DOGE, и др.",
+    "tickerPlaceholder": "BTC, ETH, DOGE и др.",
+    "tickerError": "Этот тикер уже добавлен",
     "filterPlaceholder": "Фильтр"
   }
 }

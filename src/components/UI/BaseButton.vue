@@ -12,13 +12,12 @@ export default {
 
 <style lang="scss">
 .base-button {
-  width: 120px;
   height: 30px;
-  padding: 0 20px;
+  padding: 0 10px;
   color: #ffffff;
   font-size: 18px;
   border: none;
-  border-radius: 20px;
+  border-radius: 5px;
   outline: none;
   background-color: #cccccc;
   cursor: pointer;

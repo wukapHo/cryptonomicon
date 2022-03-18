@@ -149,10 +149,10 @@ export default {
 }
 
 .base-button.field__item-button-delete {
-  width: 140px;
+  padding-left: 35px;
   text-align: right;
   background-image: url(../assets/cart-icon.svg);
-  background-position: center left 20px;
+  background-position: center left 10px;
   background-repeat: no-repeat;
 }
 </style>

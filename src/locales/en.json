@@ -5,6 +5,7 @@
     "next": "Next",
     "prev": "Prev",
     "tickerPlaceholder": "BTC, ETH, DOGE, etc.",
+    "tickerError": "This ticker has been added",
     "filterPlaceholder": "Filter"
   }
 }

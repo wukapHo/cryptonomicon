@@ -136,7 +136,10 @@ export default {
   &__buttons {
     position: relative;
     height: 30px;
-    width: 180px;
+    width: 160px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
 
     @media (max-width: 420px) {
       width: 100%;
@@ -154,10 +157,5 @@ export default {
       right: 0;
     }
   }
-}
-
-.base-button.interface__button {
-  width: 85px;
-  padding: 0;
 }
 </style>

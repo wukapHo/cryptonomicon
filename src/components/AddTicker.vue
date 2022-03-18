@@ -13,7 +13,7 @@
         }"
         class="ticker__error"
       >
-        Такой тикер уже добавлен
+        {{ $t('content.tickerError') }}
       </div>
       <base-input
         id="ticker"
@@ -70,6 +70,7 @@ export default {
       isAdded: false,
       isInvalid: false,
       coinList: null,
+      tipCount: 4,
     };
   },
 
@@ -80,8 +81,8 @@ export default {
         this.coinList.forEach((coin) => {
           if (coin.indexOf(this.ticker.toUpperCase()) === 0) {
             data = [...data, coin];
-            if (data.length > 4) {
-              data = data.slice(0, 4);
+            if (data.length > this.tipCount) {
+              data = data.slice(0, this.tipCount);
             }
           }
         });
@@ -152,7 +153,6 @@ export default {
     display: flex;
     width: 220px;
     height: 20px;
-    padding: 0 10px;
   }
 
   &__auto-item {
@@ -173,7 +173,6 @@ export default {
 
   &__error {
     margin-bottom: 5px;
-    padding: 0 12px;
     color: #fa2020;
     opacity: 0;
 
@@ -189,9 +188,9 @@ export default {
 
 .base-button.ticker__button {
   margin-left: 20px;
-  width: 150px;
+  padding-left: 35px;
   background-image: url(../assets/plus-icon.svg);
-  background-position: center left 20px;
+  background-position: center left 10px;
   background-repeat: no-repeat;
 
   @media (max-width: 768px) {

@@ -60,7 +60,7 @@ export default {
     align-items: center;
     justify-content: center;
     border: 1px solid #cccccc;
-    border-radius: 10px;
+    border-radius: 5px;
     color: #cccccc;
     text-transform: uppercase;
     cursor: pointer;
@@ -69,6 +69,10 @@ export default {
     &:hover {
       color: #ffffff;
       background-color: #cccccc;
+    }
+
+    &:active {
+      transform: scale(1.1);
     }
   }
 }
