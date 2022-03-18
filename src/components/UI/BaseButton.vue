@@ -21,7 +21,7 @@ export default {
   outline: none;
   background-color: #cccccc;
   cursor: pointer;
-  transition: 0.3s;
+  transition: all 0.3s, visibility 0s;
 
   &:hover {
     background-color: #798d87;

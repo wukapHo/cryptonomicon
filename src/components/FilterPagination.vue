@@ -27,9 +27,9 @@
         {{ $t('content.prev') }}
       </base-button>
       <base-button
-        v-show="hasNextPage"
         @click="page += 1"
         class="interface__button interface__button--next"
+        :class="{ 'visually-hidden': !hasNextPage }"
       >
         {{ $t('content.next') }}
       </base-button>
@@ -147,15 +147,22 @@ export default {
   }
 
   &__button {
-    &--prev {
-      position: absolute;
-      left: 0;
+    &:last-child {
+      margin-left: 10px;
     }
+    // &--prev {
+    //   position: absolute;
+    //   left: 0;
+    // }
 
-    &--next {
-      position: absolute;
-      right: 0;
-    }
+    // &--next {
+    //   position: absolute;
+    //   right: 0;
+    // }
   }
+}
+
+.visually-hidden {
+  visibility: hidden;
 }
 </style>
